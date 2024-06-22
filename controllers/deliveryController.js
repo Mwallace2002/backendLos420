@@ -1,27 +1,30 @@
 const connection = require('../models/db');
 
 module.exports.deliveryController = (req, res) => {
-    const { department } = req.params;
-
-    const consult = 'SELECT numero FROM contactos WHERE name = ?';
+    const consult = 'SELECT numero FROM contactos WHERE departamento = ?';
 
     try {
-        connection.query(consult, [department], (err, result) => {
+        const { department } = req.params;
+        
+        console.log(`Department: ${department}`);
+
+        connection.query(consult, [department], (err, results) => {
             if (err) {
-                console.error(err);
-                res.status(500).json({ message: 'Error de servidor' });
+                console.error(err.message);
+                res.status(500).json({ error: 'An error occurred' });
+                return;
+            }
+            
+            if (results.length === 0) {
+                res.status(404).json({ message: 'No contact found for the specified department' });
                 return;
             }
 
-            if (result.length > 0) {
-                const whatsappNumber = result[0].numero;
-                res.json({ whatsappNumber });
-            } else {
-                res.status(404).json({ message: 'Departamento no encontrado' });
-            }
+            const numero = results[0].numero;
+            res.json({ numero });
         });
-    } catch (error) {
-        console.error('Error en el controlador de entrega:', error);
-        res.status(500).json({ message: 'Error de servidor' });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'An error occurred' });
     }
 };
