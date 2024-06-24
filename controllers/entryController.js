@@ -22,35 +22,36 @@ module.exports.getAllEntries = (req, res) => {
 
 // Crear un nuevo ingreso
 module.exports.createEntry = (req, res) => {
-  const { tipo, nombre, referencia, patente, dept, horario } = req.body;
-
-  const consulta = 'INSERT INTO ingreso (tipo, nombre, referencia, patente, dept, horario) VALUES (?, ?, ?, ?, ?, ?)';
-
-  try {
-    connection.query(consulta, [tipo, nombre, referencia, patente, dept, horario], (err, result) => {
-      if (err) {
-        console.error('Database query error:', err);
-        res.status(500).json({ error: 'Error en el servidor' });
-        return;
-      }
-
-      res.status(201).json({ message: 'Ingreso creado exitosamente', id: result.insertId });
-    });
-  } catch (e) {
-    console.error('Server error:', e);
-    res.status(500).json({ error: 'Error en el servidor' });
-  }
-};
+    const { tipo, nombre, referencia, dept, horario } = req.body;
+  
+    const consulta = 'INSERT INTO ingreso (tipo, nombre, referencia, dept, horario) VALUES (?, ?, ?, ?, ?)'; // Aquí estaba el error, un parámetro adicional en VALUES
+  
+    try {
+      connection.query(consulta, [tipo, nombre, referencia, dept, horario], (err, result) => {
+        if (err) {
+          console.error('Database query error:', err);
+          res.status(500).json({ error: 'Error en el servidor' });
+          return;
+        }
+  
+        res.status(201).json({ message: 'Ingreso creado exitosamente', id: result.insertId });
+      });
+    } catch (e) {
+      console.error('Server error:', e);
+      res.status(500).json({ error: 'Error en el servidor' });
+    }
+  };
+  
 
 // Actualizar un ingreso existente
 module.exports.updateEntry = (req, res) => {
   const { id } = req.params; // Suponiendo que pasas el ID a través de los parámetros de la ruta
-  const { tipo, nombre, referencia, patente, dept, horario } = req.body;
+  const { tipo, nombre, referencia, dept, horario } = req.body;
 
-  const consulta = 'UPDATE ingreso SET tipo = ?, nombre = ?, referencia = ?, patente = ?, dept = ?, horario = ? WHERE id = ?';
+  const consulta = 'UPDATE ingreso SET tipo = ?, nombre = ?, referencia = ?, dept = ?, horario = ? WHERE id = ?';
 
   try {
-    connection.query(consulta, [tipo, nombre, referencia, patente, dept, horario, id], (err, result) => {
+    connection.query(consulta, [tipo, nombre, referencia, dept, horario, id], (err, result) => {
       if (err) {
         console.error('Database query error:', err);
         res.status(500).json({ error: 'Error en el servidor' });

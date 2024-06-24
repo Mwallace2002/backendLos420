@@ -8,11 +8,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Configuración de CORS para permitir solicitudes desde http://localhost:4173
-app.use(cors({
+const corsOptions = {
   origin: 'http://localhost:4173', // Permitir solicitudes desde este origen durante el desarrollo
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
   allowedHeaders: ['Content-Type', 'Authorization'], // Cabeceras permitidas
-}));
+};
+
+app.use(cors(corsOptions));
 
 // Ruta de inicio básica para verificar que el servidor está funcionando
 app.get('/', (req, res) => {
